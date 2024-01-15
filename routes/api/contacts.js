@@ -2,23 +2,30 @@ const express = require("express");
 const Joi = require("joi");
 
 const contacts = require("../../models/contacts");
-const regexName = "^[A-Z][a-z]+ [A-Z][a-z]+$";
-const regexPhone = "^[0-9]{3}-[0-9]{3}-[0-9]{4}$";
+// const regexName = "^[A-Z][a-z]+ [A-Z][a-z]+$";
+// const regexPhone = "^[0-9]{3}-[0-9]{3}-[0-9]{4}$";
 
 const { HttpError } = require("../../helpers");
 
 const router = express.Router();
 
-const addShema = Joi.object({
-  name: Joi.string().min(3).max(30).pattern(new RegExp(regexName)).required(),
+const addSchema = Joi.object({
+  name: Joi.string()
+    .min(3)
+    .max(30)
+    // .pattern(new RegExp(regexName))
+    .required()
+    .messages({ "any.required": "missing required name field" }),
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
+    .required()
+    .messages({ "any.required": "missing required email field" }),
   phone: Joi.string()
     .min(12)
     .max(12)
-    .pattern(new RegExp(regexPhone))
-    .required(),
+    // .pattern(new RegExp(regexPhone))
+    .required()
+    .messages({ "any.required": "missing required phone field" }),
 });
 
 router.get("/", async (req, res, next) => {
@@ -47,13 +54,18 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { error } = addShema.validate(req.body);
-    if (error) {
-      throw HttpError(
-        400,
-        `Missing required ${error.details[0].context.key} field`
-      );
+    const { error } = addSchema.validate(req.body);
+
+    const { name, email, phone } = req.body;
+
+    if (!name || !email || !phone) {
+      throw HttpError(400, ` ${error.details[0].message} `);
     }
+
+    if (error) {
+      throw HttpError(400, `Validation error: ${error.details[0].message}`);
+    }
+
     const newContact = await contacts.addContact(req.body);
     res.status(201).json(newContact);
   } catch (error) {
@@ -76,10 +88,7 @@ router.delete("/:contactId", async (req, res, next) => {
 
 router.put("/:contactId", async (req, res, next) => {
   try {
-    const { error } = addShema.validate(req.body);
-
-    if (error) {
-      console.error(error);
+    if (Object.keys(req.body).length === 0) {
       throw HttpError(400, `Missing  fields`);
     }
 
