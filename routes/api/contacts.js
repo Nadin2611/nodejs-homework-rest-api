@@ -92,12 +92,12 @@ router.put("/:contactId", async (req, res, next) => {
     if (Object.keys(req.body).length === 0) {
       throw HttpError(400, `Missing  fields`);
     }
-    const { error } = addSchema.validate(req.body);
+    // const { error } = addSchema.validate(req.body);
 
-    console.log(req.body);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
+    // console.log(req.body);
+    // if (error) {
+    //   throw HttpError(400, error.message);
+    // }
 
     const { contactId } = req.params;
     const updatedContact = await contacts.updateContact(contactId, req.body);
