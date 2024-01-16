@@ -19,13 +19,20 @@ const addSchema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
     .required()
-    .messages({ "any.required": "missing required email field" }),
+    .messages({
+      "string.email": `Invalid email format`,
+      "any.required": "missing required email field",
+    }),
   phone: Joi.string()
-    .min(12)
+    .min(8)
     .max(12)
     // .pattern(new RegExp(regexPhone))
-    .required()
-    .messages({ "any.required": "missing required phone field" }),
+    .pattern(/^[\d()-]+$/)
+    .messages({
+      "string.pattern.base": `A phone number can only contain "digits", "-" and "()"`,
+      "any.required": "missing required phone field",
+    })
+    .required(),
 });
 
 router.get("/", async (req, res, next) => {
@@ -56,14 +63,8 @@ router.post("/", async (req, res, next) => {
   try {
     const { error } = addSchema.validate(req.body);
 
-    const { name, email, phone } = req.body;
-
-    if (!name || !email || !phone) {
-      throw HttpError(400, ` ${error.details[0].message} `);
-    }
-
     if (error) {
-      throw HttpError(400, `Validation error: ${error.details[0].message}`);
+      throw HttpError(400, error.message);
     }
 
     const newContact = await contacts.addContact(req.body);
@@ -90,6 +91,12 @@ router.put("/:contactId", async (req, res, next) => {
   try {
     if (Object.keys(req.body).length === 0) {
       throw HttpError(400, `Missing  fields`);
+    }
+    const { error } = addSchema.validate(req.body, { abortEarly: true });
+
+    console.log(req.body);
+    if (error) {
+      throw HttpError(400, error.message);
     }
 
     const { contactId } = req.params;
