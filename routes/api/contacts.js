@@ -92,7 +92,7 @@ router.put("/:contactId", async (req, res, next) => {
     if (Object.keys(req.body).length === 0) {
       throw HttpError(400, `Missing  fields`);
     }
-    const { error } = addSchema.validate(req.body, { abortEarly: true });
+    const { error } = addSchema.validate(req.body);
 
     console.log(req.body);
     if (error) {
