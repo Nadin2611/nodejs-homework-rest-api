@@ -14,8 +14,12 @@ const addSchema = Joi.object({
     .min(3)
     .max(30)
     // .pattern(new RegExp(regexName))
+    .pattern(/^[A-Z][a-z]+ [A-Z][a-z]+$/)
     .required()
-    .messages({ "any.required": "missing required name field" }),
+    .messages({
+      "string.pattern.base": `The name can only contain letters`,
+      "any.required": "missing required name field",
+    }),
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
     .required()
@@ -92,12 +96,18 @@ router.put("/:contactId", async (req, res, next) => {
     if (Object.keys(req.body).length === 0) {
       throw HttpError(400, `Missing  fields`);
     }
-    // const { error } = addSchema.validate(req.body);
 
-    // console.log(req.body);
-    // if (error) {
-    //   throw HttpError(400, error.message);
-    // }
+    const { error } = addSchema.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      const validationErrors = error.details
+        .filter((detail) => detail.type !== "any.required")
+        .map((detail) => detail.message);
+
+      if (validationErrors.length > 0) {
+        throw HttpError(400, validationErrors.join("; "));
+      }
+    }
 
     const { contactId } = req.params;
     const updatedContact = await contacts.updateContact(contactId, req.body);
