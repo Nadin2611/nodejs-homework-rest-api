@@ -39,6 +39,30 @@ const addSchema = Joi.object({
     .required(),
 });
 
+const updateSchema = Joi.object({
+  name: Joi.string()
+    .min(3)
+    .max(30)
+    // .pattern(new RegExp(regexName))
+    .pattern(/^[A-Z][a-z]+ [A-Z][a-z]+$/)
+    .messages({
+      "string.pattern.base": `The name can only contain letters`,
+    }),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .messages({
+      "string.email": `Invalid email format`,
+    }),
+  phone: Joi.string()
+    .min(8)
+    .max(12)
+    // .pattern(new RegExp(regexPhone))
+    .pattern(/^[\d()-]+$/)
+    .messages({
+      "string.pattern.base": `A phone number can only contain "digits", "-" and "()"`,
+    }),
+});
+
 router.get("/", async (req, res, next) => {
   try {
     const allContacts = await contacts.listContacts();
@@ -97,16 +121,10 @@ router.put("/:contactId", async (req, res, next) => {
       throw HttpError(400, `Missing  fields`);
     }
 
-    const { error } = addSchema.validate(req.body, { abortEarly: false });
+    const { error } = updateSchema.validate(req.body);
 
     if (error) {
-      const validationErrors = error.details
-        .filter((detail) => detail.type !== "any.required")
-        .map((detail) => detail.message);
-
-      if (validationErrors.length > 0) {
-        throw HttpError(400, validationErrors.join("; "));
-      }
+      throw HttpError(400, error.message);
     }
 
     const { contactId } = req.params;
