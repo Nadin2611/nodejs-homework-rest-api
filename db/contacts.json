@@ -12,12 +12,6 @@
     "phone": "(294) 840-6685"
   },
   {
-    "id": "drsAJ4SHPYqZeG-83QTVW",
-    "name": "Kennedy Lane",
-    "email": "mattis.Cras@nonenimMauris.net",
-    "phone": "(542) 451-7038"
-  },
-  {
     "id": "vza2RIzNGIwutCVCs4mCL",
     "name": "Wylie Pope",
     "email": "est@utquamvel.net",
@@ -67,20 +61,14 @@
   },
   {
     "id": "9mO3uPtgUbly9zudlHTIx",
-    "name": "Jessica Smith",
+    "name": "Debby Doe",
     "email": "augue@gravidaPraesent.net",
-    "phone": "(555) 123-4567"
+    "phone": "(555) 987-6543"
   },
   {
-    "id": "SL3HM2PpL6HKanCnrupBm",
-    "name": "Alice Johnson",
-    "email": "alice.johnson@example.com",
-    "phone": "78-790172"
-  },
-  {
-    "id": "Uy0C6d_wZ6JqRwSM48j7L",
-    "name": "Alice Johnson",
-    "email": "alice.johnson@example.com",
-    "phone": "987-654-3210"
+    "id": "6MynVhe4FYJJD6Qad-tp2",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "(555)987-6543"
   }
 ]
