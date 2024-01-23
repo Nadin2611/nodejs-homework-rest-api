@@ -1,62 +1,65 @@
-import { Contact } from "../shemas/contactsSchemas.js";
-// import HttpError from "../helpers/HttpError.js";
+import { Contact } from "../schemas/contactsSchemas.js";
+import { HttpError, ctrlWrapper } from "../helpers/index.js";
 
-export const getAllContacts = async (req, res, next) => {
-  try {
-    const allContacts = await Contact.find();
-    res.json(allContacts);
-  } catch (error) {
-    next(error);
-  }
+const getAllContacts = async (req, res, next) => {
+  const allContacts = await Contact.find();
+  res.json(allContacts);
 };
 
-// export const getContactById = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const contactById = await contactsService.findContactById(id);
+const getContactById = async (req, res, next) => {
+  const { id } = req.params;
+  const contactById = await Contact.findById(id, "-createdAt -updatedAt");
 
-//     if (!contactById) {
-//       throw HttpError(404);
-//     }
-
-//     res.json(contactById);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// export const deleteContact = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const deletedContact = await contactsService.removeContact(id);
-//     if (!deletedContact) {
-//       throw HttpError(404);
-//     }
-//     res.json({ message: "Contact deleted" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-export const createContact = async (req, res, next) => {
-  try {
-    const newContact = await Contact.create(req.body);
-    res.status(201).json(newContact);
-  } catch (error) {
-    next(error);
+  if (!contactById) {
+    throw HttpError(404);
   }
+
+  res.json(contactById);
 };
 
-// export const updateContact = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const updatedContact = await contactsService.updateContact(id, req.body);
+const deleteContact = async (req, res, next) => {
+  const { id } = req.params;
+  const deletedContact = await Contact.findByIdAndDelete(id);
+  if (!deletedContact) {
+    throw HttpError(404);
+  }
+  res.json({ message: "Contact deleted" });
+};
 
-//     if (!updatedContact) {
-//       throw HttpError(404);
-//     }
-//     res.json(updatedContact);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const createContact = async (req, res, next) => {
+  const newContact = await Contact.create(req.body);
+  res.status(201).json(newContact);
+};
+
+const updateContact = async (req, res, next) => {
+  const { id } = req.params;
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+
+  if (!updatedContact) {
+    throw HttpError(404);
+  }
+  res.json(updatedContact);
+};
+
+const updateStatusContact = async (req, res, next) => {
+  const { id } = req.params;
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+
+  if (!updatedContact) {
+    throw HttpError(404);
+  }
+  res.json(updatedContact);
+};
+
+export default {
+  getAllContacts: ctrlWrapper(getAllContacts),
+  getContactById: ctrlWrapper(getContactById),
+  deleteContact: ctrlWrapper(deleteContact),
+  createContact: ctrlWrapper(createContact),
+  updateContact: ctrlWrapper(updateContact),
+  updateStatusContact: ctrlWrapper(updateStatusContact),
+};
