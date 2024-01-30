@@ -1,12 +1,12 @@
 import { Contact } from "../schemas/contactsSchemas.js";
 import { HttpError, ctrlWrapper } from "../helpers/index.js";
 
-const getAllContacts = async (req, res, next) => {
+const getAllContacts = async (req, res) => {
   const allContacts = await Contact.find();
   res.json(allContacts);
 };
 
-const getContactById = async (req, res, next) => {
+const getContactById = async (req, res) => {
   const { id } = req.params;
   const contactById = await Contact.findById(id, "-createdAt -updatedAt");
 
@@ -17,7 +17,7 @@ const getContactById = async (req, res, next) => {
   res.json(contactById);
 };
 
-const deleteContact = async (req, res, next) => {
+const deleteContact = async (req, res) => {
   const { id } = req.params;
   const deletedContact = await Contact.findByIdAndDelete(id);
   if (!deletedContact) {
@@ -26,12 +26,12 @@ const deleteContact = async (req, res, next) => {
   res.json({ message: "Contact deleted" });
 };
 
-const createContact = async (req, res, next) => {
+const createContact = async (req, res) => {
   const newContact = await Contact.create(req.body);
   res.status(201).json(newContact);
 };
 
-const updateContact = async (req, res, next) => {
+const updateContact = async (req, res) => {
   const { id } = req.params;
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
@@ -43,7 +43,7 @@ const updateContact = async (req, res, next) => {
   res.json(updatedContact);
 };
 
-const updateStatusContact = async (req, res, next) => {
+const updateStatusContact = async (req, res) => {
   const { id } = req.params;
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
