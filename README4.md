@@ -149,12 +149,12 @@ ResponseBody: {
 Якщо користувача не існує повернути [Помилку Unauthorized](#logout-unauthorized-error).
 В іншому випадку, видалити токен у поточного юзера і повернути [Успішна відповідь](#logout-success-response).
 
-## Logout request
+###### Logout request
 
 POST /users/logout
 Authorization: "Bearer {{token}}"
 
-## Logout unauthorized error {#logout-unauthorized-error}
+###### Logout unauthorized error {#logout-unauthorized-error}
 
 Status: 401 Unauthorized
 Content-Type: application/json
@@ -162,7 +162,7 @@ ResponseBody: {
 "message": "Not authorized"
 }
 
-## Logout success response {#logout-success-response}
+###### Logout success response {#logout-success-response}
 
 Status: 204 No Content
 
