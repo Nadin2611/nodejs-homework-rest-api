@@ -47,35 +47,39 @@ token: String
 - Якщо пошта вже використовується кимось іншим, повернути [Помилку Conflict](#registration-conflict-error).
 - В іншому випадку повернути [Успішна відповідь](#registration-success-response).
 
-Registration request {#registration-request}
-POST /users/register
-Content-Type: application/json
-RequestBody: {
-"email": "example@example.com",
-"password": "examplepassword"
-}
+###### Registration request
 
-Registration validation error {#registration-validation-error}
-Status: 400 Bad Request
-Content-Type: application/json
-ResponseBody: <Помилка від Joi або іншої бібліотеки валідації>
+    POST /users/register
+    Content-Type: application/json
+    RequestBody: {
+        "email": "example@example.com",
+        "password": "examplepassword"
+        }
 
-Registration conflict error {#registration-conflict-error}
-Status: 409 Conflict
-Content-Type: application/json
-ResponseBody: {
-"message": "Email in use"
-}
+###### Registration validation error
 
-Registration success response {#registration-success-response}
-Status: 201 Created
-Content-Type: application/json
-ResponseBody: {
-"user": {
-"email": "example@example.com",
-"subscription": "starter"
-}
-}
+    Status: 400 Bad Request
+    Content-Type: application/json
+    ResponseBody: <Помилка від Joi або іншої бібліотеки валідації>
+
+###### Registration conflict error
+
+    Status: 409 Conflict
+    Content-Type: application/json
+    ResponseBody: {
+        "message": "Email in use"
+        }
+
+###### Registration success response
+
+    Status: 201 Created
+    Content-Type: application/json
+    ResponseBody: {
+        "user": {
+            "email": "example@example.com",
+            "subscription": "starter"
+            }
+        }
 
 ### Логін
 
@@ -88,35 +92,39 @@ ResponseBody: {
 - В іншому випадку, порівняти пароль для знайденого користувача, якщо паролі збігаються створити токен, зберегти в поточному юзера і повернути [Успішна відповідь](#login-success-response).
 - Якщо пароль або імейл невірний, повернути [Помилку Unauthorized](#login-auth-error).
 
-Login request {#login-request}
-POST /users/login
-Content-Type: application/json
-RequestBody: {
-"email": "example@example.com",
-"password": "examplepassword"
-}
+###### Login request
 
-Login validation error {#validation-error-login}
-Status: 400 Bad Request
-Content-Type: application/json
-ResponseBody: <Помилка від Joi або іншої бібліотеки валідації>
+    POST /users/login
+    Content-Type: application/json
+    RequestBody: {
+        "email": "example@example.com",
+        "password": "examplepassword"
+        }
 
-Login success response {#login-success-response}
-Status: 200 OK
-Content-Type: application/json
-ResponseBody: {
-"token": "exampletoken",
-"user": {
-"email": "example@example.com",
-"subscription": "starter"
-}
-}
+###### Login validation error
 
-Login auth error {#login-auth-error}
-Status: 401 Unauthorized
-ResponseBody: {
-"message": "Email or password is wrong"
-}
+    Status: 400 Bad Request
+    Content-Type: application/json
+    ResponseBody: <Помилка від Joi або іншої бібліотеки валідації>
+
+###### Login success response
+
+    Status: 200 OK
+    Content-Type: application/json
+    ResponseBody: {
+        "token": "exampletoken",
+        "user": {
+        "email": "example@example.com",
+        "subscription": "starter"
+            }
+        }
+
+###### Login auth error
+
+    Status: 401 Unauthorized
+    ResponseBody: {
+        "message": "Email or password is wrong"
+        }
 
 ## Крок 3
 
@@ -130,12 +138,13 @@ ResponseBody: {
 - Якщо користувач існує і токен збігається з тим, що знаходиться в базі, записати його дані в req.user і викликати next().
 - Якщо користувача з таким id НЕ існує або токени не збігаються, повернути [Помилку Unauthorized](#middleware-unauthorized-error).
 
-Middleware unauthorized error {#middleware-unauthorized-error}
-Status: 401 Unauthorized
-Content-Type: application/json
-ResponseBody: {
-"message": "Not authorized"
-}
+###### Middleware unauthorized error
+
+    Status: 401 Unauthorized
+    Content-Type: application/json
+    ResponseBody: {
+        "message": "Not authorized"
+        }
 
 ## Крок 4
 
@@ -151,20 +160,20 @@ ResponseBody: {
 
 ###### Logout request
 
-POST /users/logout
-Authorization: "Bearer {{token}}"
+    POST /users/logout
+    Authorization: "Bearer {{token}}"
 
-###### Logout unauthorized error {#logout-unauthorized-error}
+###### Logout unauthorized error
 
-Status: 401 Unauthorized
-Content-Type: application/json
-ResponseBody: {
-"message": "Not authorized"
-}
+    Status: 401 Unauthorized
+    Content-Type: application/json
+    ResponseBody: {
+        "message": "Not authorized"
+        }
 
-###### Logout success response {#logout-success-response}
+###### Logout success response
 
-Status: 204 No Content
+    Status: 204 No Content
 
 ## Крок 5
 
@@ -177,24 +186,27 @@ Status: 204 No Content
 Якщо користувача не існує повернути [Помилку Unauthorized](#current-user-unauthorized-error).
 В іншому випадку повернути [Успішну відповідь](#current-user-success-response).
 
-Current user request {#current-user-request}
-GET /users/current
-Authorization: "Bearer {{token}}"
+###### Current user request
 
-Current user unauthorized error {#current-user-unauthorized-error}
-Status: 401 Unauthorized
-Content-Type: application/json
-ResponseBody: {
-"message": "Not authorized"
-}
+    GET /users/current
+    Authorization: "Bearer {{token}}"
 
-Current user success response {#current-user-success-response}
-Status: 200 OK
-Content-Type: application/json
-ResponseBody: {
-"email": "example@example.com",
-"subscription": "starter"
-}
+###### Current user unauthorized error
+
+    Status: 401 Unauthorized
+    Content-Type: application/json
+    ResponseBody: {
+        "message": "Not authorized"
+        }
+
+###### Current user success response
+
+    Status: 200 OK
+    Content-Type: application/json
+    ResponseBody: {
+        "email": "example@example.com",
+        "subscription": "starter"
+        }
 
 ## Додаткове завдання - необов'язкове
 
