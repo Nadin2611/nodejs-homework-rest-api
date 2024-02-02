@@ -45,7 +45,10 @@ export const createContactSchema = Joi.object({
       "any.required": "missing required name field",
     }),
   email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net", "ca", "org"] },
+    })
     .required()
     .messages({
       "string.email": `Invalid email format`,

@@ -7,7 +7,12 @@ import {
   updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
 
-import { isValidId, validateBody, isEmptyBody } from "../middlewares/index.js";
+import {
+  isValidId,
+  validateBody,
+  isEmptyBody,
+  authenticate,
+} from "../middlewares/index.js";
 
 const {
   getAllContacts,
@@ -20,16 +25,22 @@ const {
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", getAllContacts);
+contactsRouter.get("/", authenticate, getAllContacts);
 
-contactsRouter.get("/:id", isValidId, getContactById);
+contactsRouter.get("/:id", authenticate, isValidId, getContactById);
 
-contactsRouter.delete("/:id", isValidId, deleteContact);
+contactsRouter.delete("/:id", authenticate, isValidId, deleteContact);
 
-contactsRouter.post("/", validateBody(createContactSchema), createContact);
+contactsRouter.post(
+  "/",
+  authenticate,
+  validateBody(createContactSchema),
+  createContact
+);
 
 contactsRouter.patch(
   "/:id/favorite",
+  authenticate,
   isValidId,
   validateBody(updateFavoriteSchema),
   updateStatusContact
@@ -37,6 +48,7 @@ contactsRouter.patch(
 
 contactsRouter.put(
   "/:id",
+  authenticate,
   isValidId,
   isEmptyBody,
   validateBody(updateContactSchema),
