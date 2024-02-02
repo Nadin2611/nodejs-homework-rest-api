@@ -31,7 +31,7 @@ export const User = model("user", userSchema);
 
 export const registerSchema = Joi.object({
   password: Joi.string().min(6).required().messages({
-    "string.password": `Invalid password format`,
+    "string.min": `Password must be at least 6 characters long`,
     "any.required": "missing required password field",
   }),
 
@@ -41,5 +41,36 @@ export const registerSchema = Joi.object({
     .messages({
       "string.email": `Invalid email format`,
       "any.required": "missing required email field",
+    }),
+
+  subscription: Joi.string().valid("starter", "pro", "business").messages({
+    "any.only":
+      "Invalid subscription type. Allowed values are: starter, pro, business",
+  }),
+});
+
+export const loginSchema = Joi.object({
+  password: Joi.string().required().messages({
+    "any.required": "missing required password field",
+  }),
+
+  email: Joi.string().required().messages({
+    "any.required": "missing required email field",
+  }),
+
+  subscription: Joi.string().valid("starter", "pro", "business").messages({
+    "any.only":
+      "Invalid subscription type. Allowed values are: starter, pro, business",
+  }),
+});
+
+export const subscriptionUpdateSchema = Joi.object({
+  subscription: Joi.string()
+    .valid("starter", "pro", "business")
+    .required()
+    .messages({
+      "any.only":
+        "Invalid subscription type. Allowed values are: starter, pro, business",
+      "any.required": "missing required subscription field",
     }),
 });
