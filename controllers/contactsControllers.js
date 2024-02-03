@@ -21,6 +21,7 @@ const getAllContacts = async (req, res) => {
 
 const getContactById = async (req, res) => {
   const { id } = req.params;
+
   const contactById = await Contact.findById(id, "-createdAt -updatedAt");
 
   if (!contactById) {
