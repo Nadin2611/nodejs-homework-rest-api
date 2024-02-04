@@ -20,9 +20,10 @@ const getAllContacts = async (req, res) => {
 };
 
 const getContactById = async (req, res) => {
-  const { id, owner } = req.params;
+  const { id } = req.params;
+  const { _id: owner } = req.user;
 
-  const contactById = await Contact.findById(
+  const contactById = await Contact.findOne(
     { _id: id, owner },
     "-createdAt -updatedAt"
   );
@@ -35,8 +36,10 @@ const getContactById = async (req, res) => {
 };
 
 const deleteContact = async (req, res) => {
-  const { id, owner } = req.params;
-  const deletedContact = await Contact.findByIdAndDelete({ _id: id, owner });
+  const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const deletedContact = await Contact.findOneAndDelete({ _id: id, owner });
   if (!deletedContact) {
     throw HttpError(404);
   }
@@ -45,13 +48,16 @@ const deleteContact = async (req, res) => {
 
 const createContact = async (req, res) => {
   const { _id: owner } = req.user;
+
   const newContact = await Contact.create({ ...req.body, owner });
   res.status(201).json(newContact);
 };
 
 const updateContact = async (req, res) => {
-  const { id, owner } = req.params;
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const updatedContact = await Contact.findOneAndUpdate(
     { _id: id, owner },
     req.body,
     {
@@ -66,8 +72,10 @@ const updateContact = async (req, res) => {
 };
 
 const updateStatusContact = async (req, res) => {
-  const { id, owner } = req.params;
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const updatedContact = await Contact.findOneAndUpdate(
     { _id: id, owner },
     req.body,
     {
