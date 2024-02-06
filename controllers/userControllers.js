@@ -1,10 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
+import path from "path";
+import { rename } from "fs/promises";
+import Jimp from "jimp";
 
 import { User } from "../schemas/usersSchemas.js";
 import { HttpError, ctrlWrapper } from "../helpers/index.js";
 
 const { SECRET_KEY } = process.env;
+const avatarDir = path.resolve("public", "avatars");
 
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -15,8 +20,13 @@ const registerUser = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
+  const avatarURL = gravatar.url(email);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
   const { email: userEmail, subscription } = newUser;
 
   res.status(201).json({
@@ -79,10 +89,32 @@ const updateSubscription = async (req, res) => {
   res.json(updatedUserSubscription);
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+
+  if (!req.file) {
+    throw HttpError(400, "Please attach your avatar");
+  }
+  const { path: tempUpload, originalname } = req.file;
+  const fileName = `${_id}_${originalname}`;
+  const resultUpLoad = path.resolve(avatarDir, fileName);
+
+  const avatar = await Jimp.read(tempUpload);
+  await avatar.resize(250, 250).write(tempUpload);
+
+  await rename(tempUpload, resultUpLoad);
+
+  const avatarURL = path.resolve("avatars", fileName);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json(avatarURL);
+};
+
 export default {
   registerUser: ctrlWrapper(registerUser),
   loginUser: ctrlWrapper(loginUser),
   logoutUser: ctrlWrapper(logoutUser),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateSubscription: ctrlWrapper(updateSubscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
