@@ -104,10 +104,11 @@ const updateAvatar = async (req, res) => {
 
   await rename(tempUpload, resultUpLoad);
 
-  const avatarURL = path.resolve("avatars", fileName);
+  const avatarURL = `avatars/${fileName}`;
+
   await User.findByIdAndUpdate(_id, { avatarURL });
 
-  res.json(avatarURL);
+  res.json({ avatarURL: avatarURL });
 };
 
 export default {
