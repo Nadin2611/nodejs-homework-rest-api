@@ -63,7 +63,7 @@ const verifyUserEmail = async (req, res) => {
   }
   await User.findByIdAndUpdate(user._id, {
     verify: true,
-    verificationToken: "",
+    verificationToken: null,
   });
 
   res.status(200).json({
@@ -86,6 +86,7 @@ const resendVerifyEmail = async (req, res) => {
   }
 
   const { verificationToken } = user;
+
   const verifyEmail = {
     to: email,
     subject: "Verify email",
